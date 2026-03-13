@@ -5,7 +5,7 @@ import os
 
 # ── Config ──────────────────────────────────────────────
 TOKEN = os.environ.get("TOKEN", "TON_TOKEN_ICI")
-PREFIX = "!"
+PREFIX = "/"
 RED = 0xE74C3C
 # ────────────────────────────────────────────────────────
 
