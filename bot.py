@@ -1,12 +1,18 @@
-# bot_ultimate_v2.py
+# bot_ultimate_secure.py
 import discord
 from discord.ext import commands, tasks
 import random
 import asyncio
+import os
+from dotenv import load_dotenv
+
+# Charger la variable d'environnement depuis .env
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
 
 intents = discord.Intents.default()
 intents.message_content = True
-intents.members = True  # nécessaire pour modération et autorole
+intents.members = True
 
 bot = commands.Bot(command_prefix='+', intents=intents)
 
@@ -15,7 +21,7 @@ bot = commands.Bot(command_prefix='+', intents=intents)
 # -----------------
 @bot.event
 async def on_ready():
-    await bot.tree.sync()  # sync des slash commands
+    await bot.tree.sync()  # Sync des slash commands
     print(f'Connecté en tant que {bot.user}')
 
 # -----------------
@@ -112,18 +118,15 @@ async def on_member_join(member):
             pass
 
 # -----------------
-# GIVEAWAY
+# GIVEAWAYS
 # -----------------
 @bot.tree.command(name="giveaway", description="Créer un giveaway")
 async def giveaway(interaction: discord.Interaction, duration: int, prize: str):
     embed = discord.Embed(title="🎉 Giveaway !", description=f"Prix: {prize}\nDurée: {duration}s", color=discord.Color.gold())
     message = await interaction.channel.send(embed=embed)
     await message.add_reaction("🎉")
-    
     await interaction.response.send_message(f"Giveaway lancé pour {duration} secondes !", ephemeral=True)
-    
     await asyncio.sleep(duration)
-    
     users = set()
     for reaction in message.reactions:
         if str(reaction.emoji) == "🎉":
@@ -204,4 +207,4 @@ async def chifumi(interaction: discord.Interaction, choix: str):
 # -----------------
 # LANCEMENT DU BOT
 # -----------------
-bot.run("TON_TOKEN_ICI")
+bot.run(TOKEN)
