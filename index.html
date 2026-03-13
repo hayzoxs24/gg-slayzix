@@ -1,646 +1,323 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Slayzix Shop — DM Panel</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --red: #E74C3C;
-    --red-dark: #c0392b;
-    --red-glow: rgba(231,76,60,0.3);
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --surface2: #1a1a1a;
-    --border: #2a2a2a;
-    --text: #f0f0f0;
-    --muted: #666;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMALL Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            background-image: 
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-  /* Background grid */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(231,76,60,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(231,76,60,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #2d2d2d;
+            margin-bottom: 20px;
+        }
 
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 60px 24px;
-  }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-  /* Header */
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 56px;
-    animation: fadeDown 0.6s ease both;
-  }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #ff4d4d;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
 
-  .logo {
-    width: 48px;
-    height: 48px;
-    background: var(--red);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    box-shadow: 0 0 24px var(--red-glow);
-  }
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+        }
 
-  .header-text h1 {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-  }
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #2ecc71;
+            font-size: 14px;
+        }
 
-  .header-text p {
-    font-size: 13px;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    margin-top: 2px;
-  }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+        }
 
-  .status-dot {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
+        .stats-card {
+            background: #121212;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #2d2d2d;
+        }
 
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #2ecc71;
-    box-shadow: 0 0 8px rgba(46,204,113,0.6);
-    animation: pulse-green 2s infinite;
-  }
+        .stats-title {
+            color: #ff4d4d;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
-  .dot.offline { background: var(--red); box-shadow: 0 0 8px var(--red-glow); animation: none; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
 
-  @keyframes pulse-green {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
+        .stat-item {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #2d2d2d;
+        }
 
-  /* Card */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    margin-bottom: 20px;
-    animation: fadeUp 0.6s ease both;
-  }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
 
-  .card:nth-child(2) { animation-delay: 0.1s; }
-  .card:nth-child(3) { animation-delay: 0.2s; }
+        .stat-label {
+            font-size: 14px;
+            color: #888;
+        }
 
-  .card-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--red);
-    margin-bottom: 20px;
-    font-family: 'JetBrains Mono', monospace;
-  }
+        .message-card {
+            background: #121212;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #2d2d2d;
+        }
 
-  /* Stats row */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-  }
+        .message-title {
+            color: #ff4d4d;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
-  .stat {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    text-align: center;
-  }
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-  .stat-value {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--text);
-    display: block;
-    font-family: 'JetBrains Mono', monospace;
-  }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #888;
+        }
 
-  .stat-label {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 4px;
-    font-family: 'JetBrains Mono', monospace;
-  }
+        .form-input {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #2d2d2d;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
 
-  /* Form */
-  label {
-    display: block;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-    font-family: 'JetBrains Mono', monospace;
-  }
+        .form-input::placeholder {
+            color: #666;
+        }
 
-  input, textarea {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    resize: none;
-    margin-bottom: 16px;
-  }
+        .form-textarea {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #2d2d2d;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            min-height: 100px;
+            resize: vertical;
+        }
 
-  input:focus, textarea:focus {
-    border-color: var(--red);
-    box-shadow: 0 0 0 3px var(--red-glow);
-  }
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
 
-  textarea { height: 120px; }
+        .send-button {
+            width: 100%;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
 
-  .char-count {
-    text-align: right;
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    margin-top: -12px;
-    margin-bottom: 16px;
-  }
+        .send-button:hover {
+            background: #ff3333;
+        }
 
-  /* Button */
-  .btn {
-    width: 100%;
-    padding: 16px;
-    background: var(--red);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #1a1a1a;
+            border-radius: 2px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
 
-  .btn:hover {
-    background: var(--red-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px var(--red-glow);
-  }
+        .progress {
+            height: 100%;
+            background: #ff4d4d;
+            width: 0%;
+            transition: width 0.3s;
+        }
 
-  .btn:active { transform: translateY(0); }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
 
-  .btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
+        .discord-chat {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 15px;
+            font-size: 14px;
+        }
 
-  .btn-shine {
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    transition: left 0.4s;
-  }
+        .discord-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
 
-  .btn:hover .btn-shine { left: 100%; }
+        .discord-logo {
+            width: 20px;
+            height: 20px;
+            background: #5865F2;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
 
-  /* Progress */
-  .progress-wrap {
-    display: none;
-    margin-top: 20px;
-  }
+        .discord-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
 
-  .progress-wrap.active { display: block; }
+        .discord-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #555;
+        }
 
-  .progress-bar-bg {
-    background: var(--surface2);
-    border-radius: 999px;
-    height: 6px;
-    overflow: hidden;
-    margin-bottom: 12px;
-  }
+        .discord-message {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
 
-  .progress-bar-fill {
-    height: 100%;
-    background: var(--red);
-    border-radius: 999px;
-    width: 0%;
-    transition: width 0.3s ease;
-    box-shadow: 0 0 10px var(--red-glow);
-  }
+        .discord-time {
+            font-size: 12px;
+            color: #888;
+            text-align: right;
+            margin-top: 5px;
+        }
 
-  .progress-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--muted);
-  }
+        .discord-actions {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
 
-  .progress-info span:last-child { color: var(--text); }
-
-  /* Log */
-  .log {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    height: 160px;
-    overflow-y: auto;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    margin-top: 16px;
-    display: none;
-  }
-
-  .log.active { display: block; }
-
-  .log-line {
-    padding: 2px 0;
-    animation: fadeIn 0.2s ease;
-  }
-
-  .log-line.ok { color: #2ecc71; }
-  .log-line.fail { color: var(--red); }
-  .log-line.info { color: #3498db; }
-  .log-line.warn { color: #f39c12; }
-
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 20px;
-    font-size: 13px;
-    font-family: 'JetBrains Mono', monospace;
-    transform: translateY(80px);
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 100;
-    max-width: 300px;
-  }
-
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { border-color: #2ecc71; color: #2ecc71; }
-  .toast.error { border-color: var(--red); color: var(--red); }
-
-  /* Modal confirm */
-  .modal-bg {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(4px);
-    z-index: 50;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-bg.active { display: flex; }
-
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    max-width: 400px;
-    width: 90%;
-    animation: fadeUp 0.3s ease;
-  }
-
-  .modal h3 { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
-  .modal p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
-  .modal-preview {
-    background: var(--surface2);
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 13px;
-    color: var(--text);
-    margin-bottom: 24px;
-    border-left: 3px solid var(--red);
-    word-break: break-word;
-  }
-
-  .modal-btns { display: flex; gap: 12px; }
-  .modal-btns .btn { margin: 0; }
-  .btn-cancel {
-    width: 100%;
-    padding: 16px;
-    background: var(--surface2);
-    color: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-family: 'Syne', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-cancel:hover { border-color: var(--muted); color: var(--text); }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-</style>
+        .discord-action {
+            color: #555;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">D</div>
+                <div class="logo-text">DMALL</div>
+            </div>
+            <div class="status">
+                <div class="status-dot"></div>
+                En ligne
+            </div>
+        </div>
 
-<div class="container">
-
-  <div class="header">
-    <div class="logo">🛒</div>
-    <div class="header-text">
-      <h1>Slayzix Shop</h1>
-      <p>DM Panel v1.0</p>
-    </div>
-    <div class="status-dot">
-      <div class="dot" id="statusDot"></div>
-      <span id="statusText">En ligne</span>
-    </div>
-  </div>
-
-  <!-- Stats -->
-  <div class="card">
-    <div class="card-title">📊 Statistiques</div>
-    <div class="stats">
-      <div class="stat">
-        <span class="stat-value" id="statTotal">—</span>
-        <div class="stat-label">Membres</div>
-      </div>
-      <div class="stat">
-        <span class="stat-value" id="statSent" style="color:#2ecc71">0</span>
-        <div class="stat-label">Envoyés</div>
-      </div>
-      <div class="stat">
-        <span class="stat-value" id="statFail" style="color:var(--red)">0</span>
-        <div class="stat-label">Échecs</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Compose -->
-  <div class="card">
-    <div class="card-title">✉️ Composer le message</div>
-
-    <label>Token du bot</label>
-    <input type="password" id="tokenInput" placeholder="Ton token Discord ici..." />
-
-    <label>Server ID</label>
-    <input type="text" id="serverInput" placeholder="000000000000000000" />
-
-    <label>Message</label>
-    <textarea id="msgInput" placeholder="Tape ton message ici... Les liens seront cliquables ✓" oninput="updateCount()"></textarea>
-    <div class="char-count"><span id="charCount">0</span> caractères</div>
-
-    <button class="btn" id="sendBtn" onclick="openModal()">
-      <span class="btn-shine"></span>
-      📨 Envoyer à tous les membres
-    </button>
-
-    <div class="progress-wrap" id="progressWrap">
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="progressFill"></div>
-      </div>
-      <div class="progress-info">
-        <span id="progressText">0 / 0</span>
-        <span id="progressPct">0%</span>
-      </div>
-    </div>
-
-    <div class="log" id="log"></div>
-  </div>
-
-</div>
-
-<!-- Modal confirmation -->
-<div class="modal-bg" id="modalBg">
-  <div class="modal">
-    <h3>📨 Confirmer l'envoi</h3>
-    <p>Tu vas envoyer ce message à <strong id="modalCount">tous les membres</strong> du serveur.</p>
-    <div class="modal-preview" id="modalPreview"></div>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-      <button class="btn" onclick="startSend()">
-        <span class="btn-shine"></span>
-        Confirmer
-      </button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-  let members = [];
-  let sending = false;
-
-  function updateCount() {
-    document.getElementById('charCount').textContent = document.getElementById('msgInput').value.length;
-  }
-
-  function showToast(msg, type = 'info') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = `toast ${type} show`;
-    setTimeout(() => t.className = 'toast', 3000);
-  }
-
-  function addLog(msg, type = 'info') {
-    const log = document.getElementById('log');
-    log.classList.add('active');
-    const line = document.createElement('div');
-    line.className = `log-line ${type}`;
-    const time = new Date().toLocaleTimeString('fr-FR');
-    line.textContent = `[${time}] ${msg}`;
-    log.appendChild(line);
-    log.scrollTop = log.scrollHeight;
-  }
-
-  function openModal() {
-    const token = document.getElementById('tokenInput').value.trim();
-    const server = document.getElementById('serverInput').value.trim();
-    const msg = document.getElementById('msgInput').value.trim();
-
-    if (!token) return showToast('❌ Token manquant', 'error');
-    if (!server) return showToast('❌ Server ID manquant', 'error');
-    if (!msg) return showToast('❌ Message vide', 'error');
-
-    document.getElementById('modalPreview').textContent = msg;
-    document.getElementById('modalBg').classList.add('active');
-  }
-
-  function closeModal() {
-    document.getElementById('modalBg').classList.remove('active');
-  }
-
-  async function fetchMembers(token, guildId) {
-    let all = [];
-    let after = '0';
-    while (true) {
-      const res = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members?limit=1000&after=${after}`, {
-        headers: { Authorization: `Bot ${token}` }
-      });
-      if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
-      const batch = await res.json();
-      const humans = batch.filter(m => !m.user.bot);
-      all = all.concat(humans);
-      if (batch.length < 1000) break;
-      after = batch[batch.length - 1].user.id;
-    }
-    return all;
-  }
-
-  async function sendDM(token, userId, message) {
-    // Ouvrir DM channel
-    const chanRes = await fetch('https://discord.com/api/v10/users/@me/channels', {
-      method: 'POST',
-      headers: { Authorization: `Bot ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recipient_id: userId })
-    });
-    if (!chanRes.ok) throw new Error('DM channel failed');
-    const chan = await chanRes.json();
-
-    // Envoyer le message
-    const msgRes = await fetch(`https://discord.com/api/v10/channels/${chan.id}/messages`, {
-      method: 'POST',
-      headers: { Authorization: `Bot ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        content: message,
-        embeds: [{
-          title: '📨 Message de Slayzix Shop',
-          description: message,
-          color: 0xE74C3C,
-          footer: { text: 'Slayzix Shop' },
-          timestamp: new Date().toISOString()
-        }]
-      })
-    });
-    if (!msgRes.ok) throw new Error(`Send failed: ${msgRes.status}`);
-  }
-
-  async function startSend() {
-    closeModal();
-    if (sending) return;
-    sending = true;
-
-    const token = document.getElementById('tokenInput').value.trim();
-    const server = document.getElementById('serverInput').value.trim();
-    const msg = document.getElementById('msgInput').value.trim();
-    const btn = document.getElementById('sendBtn');
-
-    btn.disabled = true;
-    btn.textContent = '⏳ Envoi en cours...';
-
-    document.getElementById('progressWrap').classList.add('active');
-    document.getElementById('log').innerHTML = '';
-
-    addLog('Récupération des membres...', 'info');
-
-    try {
-      members = await fetchMembers(token, server);
-      document.getElementById('statTotal').textContent = members.length;
-      document.getElementById('modalCount').textContent = members.length;
-      addLog(`${members.length} membres trouvés`, 'ok');
-    } catch (e) {
-      addLog(`Erreur: ${e.message}`, 'fail');
-      showToast('❌ Erreur de connexion', 'error');
-      btn.disabled = false;
-      btn.textContent = '📨 Envoyer à tous les membres';
-      sending = false;
-      return;
-    }
-
-    let ok = 0, fail = 0;
-
-    for (let i = 0; i < members.length; i++) {
-      const m = members[i];
-      try {
-        await sendDM(token, m.user.id, msg);
-        ok++;
-        addLog(`✓ ${m.user.username}`, 'ok');
-      } catch (e) {
-        fail++;
-        addLog(`✗ ${m.user.username} — ${e.message}`, 'fail');
-      }
-
-      // Update UI
-      const pct = Math.round(((i + 1) / members.length) * 100);
-      document.getElementById('progressFill').style.width = pct + '%';
-      document.getElementById('progressText').textContent = `${i + 1} / ${members.length}`;
-      document.getElementById('progressPct').textContent = pct + '%';
-      document.getElementById('statSent').textContent = ok;
-      document.getElementById('statFail').textContent = fail;
-
-      await new Promise(r => setTimeout(r, 100));
-    }
-
-    addLog(`✅ Terminé — ${ok} envoyés, ${fail} échecs`, 'ok');
-    showToast(`✅ ${ok} envoyés, ${fail} échecs`, 'success');
-
-    btn.disabled = false;
-    btn.textContent = '📨 Envoyer à tous les membres';
-    sending = false;
-  }
-</script>
-</body>
-</html>
+        <div class="stats-card">
+            <div class="stats-title">
+                <i class="fas fa-chart-bar"></i>
+                STATISTIQUES
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">-</div>
+                    <div class="stat-label">M
