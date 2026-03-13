@@ -1,0 +1,10 @@
+INSTRUCTION :
+
+- Installer node js (si possible la dernière version) https://nodejs.org/fr/download
+- Installer les dépendances en tapant : npm install
+- Lancer le script en tapant : node index
+- Faire la première configuration en rentrant les infos voulue 
+- Relancer le script une fois la première configuration terminé 
+
+
+VOILA VOUS AVEZ VOTRE BASE CROW BOT QUE VOUS POUVEZ MAINTENANT CHANGER EN FONCTION DE VOS DEMANDES 
