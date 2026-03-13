@@ -4,9 +4,7 @@ import random
 import asyncio
 import os
 
-# Récupération du token depuis variable d'environnement
-# Sur Replit : va dans Secrets et ajoute DISCORD_TOKEN
-# Sur Docker / VPS : export DISCORD_TOKEN="TON_TOKEN_ICI"
+# Token sécurisé via variable d'environnement
 TOKEN = os.environ.get("DISCORD_TOKEN")
 if not TOKEN:
     raise ValueError("Le token du bot n'est pas défini ! Ajoute DISCORD_TOKEN dans les variables d'environnement.")
@@ -26,15 +24,20 @@ async def on_ready():
     print(f'Connecté en tant que {bot.user}')
 
 # -----------------
-# COMMANDE INVISIBLE EN DM
+# COMMANDE DM ALL
 # -----------------
 @bot.command()
-async def hayzoxs(ctx, *, message: str = "||Voici le message invisible||"):
-    try:
-        await ctx.author.send(message)
-        await ctx.send(f"{ctx.author.mention}, message envoyé en DM !", delete_after=5)
-    except discord.Forbidden:
-        await ctx.send(f"{ctx.author.mention}, je n'ai pas pu t'envoyer le message en DM.")
+async def hayzoxs(ctx, *, message: str):
+    """Envoie un DM à tous les membres du serveur (hors bots)."""
+    count = 0
+    for member in ctx.guild.members:
+        if not member.bot:
+            try:
+                await member.send(message)
+                count += 1
+            except:
+                pass
+    await ctx.send(f"Message envoyé à {count} membres du serveur !")
 
 # -----------------
 # MODÉRATION
