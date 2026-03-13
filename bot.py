@@ -1,14 +1,15 @@
-# bot_ultimate_secure.py
 import discord
 from discord.ext import commands, tasks
 import random
 import asyncio
 import os
-from dotenv import load_dotenv
 
-# Charger la variable d'environnement depuis .env
-load_dotenv()
-TOKEN = os.getenv("DISCORD_TOKEN")
+# Récupération du token depuis variable d'environnement
+# Sur Replit : va dans Secrets et ajoute DISCORD_TOKEN
+# Sur Docker / VPS : export DISCORD_TOKEN="TON_TOKEN_ICI"
+TOKEN = os.environ.get("DISCORD_TOKEN")
+if not TOKEN:
+    raise ValueError("Le token du bot n'est pas défini ! Ajoute DISCORD_TOKEN dans les variables d'environnement.")
 
 intents = discord.Intents.default()
 intents.message_content = True
