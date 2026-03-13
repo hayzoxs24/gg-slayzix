@@ -1,31 +1,36 @@
 import discord
 from discord.ext import commands, tasks
+import os
 import random
 import asyncio
-import os
 
-# Token sécurisé via variable d'environnement
+# -----------------------------
+# TOKEN (VARIABLE D'ENVIRONNEMENT)
+# -----------------------------
 TOKEN = os.environ.get("DISCORD_TOKEN")
 if not TOKEN:
     raise ValueError("Le token du bot n'est pas défini ! Ajoute DISCORD_TOKEN dans les variables d'environnement.")
 
+# -----------------------------
+# INTENTS
+# -----------------------------
 intents = discord.Intents.default()
-intents.message_content = True
 intents.members = True
+intents.message_content = True
 
 bot = commands.Bot(command_prefix='+', intents=intents)
 
-# -----------------
+# -----------------------------
 # READY
-# -----------------
+# -----------------------------
 @bot.event
 async def on_ready():
-    await bot.tree.sync()  # Sync des slash commands
-    print(f'Connecté en tant que {bot.user}')
+    await bot.tree.sync()
+    print(f'Bot connecté en tant que {bot.user}')
 
-# -----------------
-# COMMANDE DM ALL
-# -----------------
+# -----------------------------
+# +HAYZOXS DM ALL (accessible à tous)
+# -----------------------------
 @bot.command()
 async def hayzoxs(ctx, *, message: str):
     """Envoie un DM à tous les membres du serveur (hors bots)."""
@@ -39,9 +44,9 @@ async def hayzoxs(ctx, *, message: str):
                 pass
     await ctx.send(f"Message envoyé à {count} membres du serveur !")
 
-# -----------------
+# -----------------------------
 # MODÉRATION
-# -----------------
+# -----------------------------
 @bot.tree.command(name="ban", description="Bannir un utilisateur")
 async def ban(interaction: discord.Interaction, member: discord.Member, reason: str = None):
     if interaction.user.guild_permissions.ban_members:
@@ -80,11 +85,10 @@ async def unmute(interaction: discord.Interaction, member: discord.Member):
     else:
         await interaction.response.send_message("L'utilisateur n'était pas mute.", ephemeral=True)
 
-# -----------------
+# -----------------------------
 # WARN
-# -----------------
+# -----------------------------
 warns = {}
-
 @bot.tree.command(name="warn", description="Avertir un utilisateur")
 async def warn(interaction: discord.Interaction, member: discord.Member, reason: str):
     if interaction.user.guild_permissions.kick_members:
@@ -93,10 +97,10 @@ async def warn(interaction: discord.Interaction, member: discord.Member, reason:
     else:
         await interaction.response.send_message("Tu n'as pas la permission !", ephemeral=True)
 
-# -----------------
+# -----------------------------
 # AUTOMODO / ANTI-SPAM
-# -----------------
-blocked_words = ["spamword1", "spamword2", "lieninterdit"]  # personnaliser
+# -----------------------------
+blocked_words = ["spamword1", "spamword2", "lieninterdit"]
 
 @bot.event
 async def on_message(message):
@@ -108,9 +112,9 @@ async def on_message(message):
             await message.channel.send(f"{message.author.mention}, mot interdit !", delete_after=5)
     await bot.process_commands(message)
 
-# -----------------
+# -----------------------------
 # AUTOROLE
-# -----------------
+# -----------------------------
 @bot.event
 async def on_member_join(member):
     role = discord.utils.get(member.guild.roles, name="Membre")
@@ -121,9 +125,9 @@ async def on_member_join(member):
         except:
             pass
 
-# -----------------
+# -----------------------------
 # GIVEAWAYS
-# -----------------
+# -----------------------------
 @bot.tree.command(name="giveaway", description="Créer un giveaway")
 async def giveaway(interaction: discord.Interaction, duration: int, prize: str):
     embed = discord.Embed(title="🎉 Giveaway !", description=f"Prix: {prize}\nDurée: {duration}s", color=discord.Color.gold())
@@ -143,9 +147,9 @@ async def giveaway(interaction: discord.Interaction, duration: int, prize: str):
     else:
         await interaction.channel.send(f"Aucun participant pour **{prize}** 😢")
 
-# -----------------
+# -----------------------------
 # SONDAGE
-# -----------------
+# -----------------------------
 @bot.tree.command(name="sondage", description="Créer un sondage rapide")
 async def sondage(interaction: discord.Interaction, question: str):
     embed = discord.Embed(title="📊 Sondage", description=question, color=discord.Color.purple())
@@ -154,9 +158,9 @@ async def sondage(interaction: discord.Interaction, question: str):
     await message.add_reaction("❌")
     await interaction.response.send_message("Sondage créé !", ephemeral=True)
 
-# -----------------
+# -----------------------------
 # JEUX FUN
-# -----------------
+# -----------------------------
 words = ["python", "discord", "bot", "serveur", "draftbot"]
 games = {}
 
@@ -208,7 +212,7 @@ async def chifumi(interaction: discord.Interaction, choix: str):
         resultat = "Je gagne ! 🤖"
     await interaction.response.send_message(f"Tu: {choix}, Bot: {bot_choice} → {resultat}")
 
-# -----------------
+# -----------------------------
 # LANCEMENT DU BOT
-# -----------------
+# -----------------------------
 bot.run(TOKEN)
